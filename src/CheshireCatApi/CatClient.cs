@@ -52,7 +52,7 @@ public class CatClient
         _webSocket.Connect();
     }
 
-    public void Disconnect()
+    public void DisconnectWebSocket()
     {
         _webSocket.Close();
     }
