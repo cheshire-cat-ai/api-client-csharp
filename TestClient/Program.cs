@@ -1,5 +1,6 @@
 ﻿using System;
 using CheshireCatApi;
+using CheshireCatApi.Model;
 
 namespace TestClient
 {
@@ -8,15 +9,9 @@ namespace TestClient
         static void Main(string[] args)
         {
             // Instantiate the WebSocket client
-            Configuration config = new Configuration();
+            ConnectionSettings config = new ConnectionSettings();
             CatClient client = new CatClient(config);
-
-            // Set up event handlers
-            client.OnMessage += (message) =>
-            {
-                Console.WriteLine("Received message: " + message);
-            };
-
+            
             client.OnOpen += () =>
             {
                 Console.WriteLine("Connected to WebSocket server.");
@@ -27,13 +22,14 @@ namespace TestClient
                 Console.WriteLine("Disconnected from WebSocket server.");
             };
 
+            client.OnMessage += (string message) =>
+            {
+                Console.WriteLine(message);
+            };
+
             // Connect to the WebSocket server
             client.ConnectWebsocket();
-
-            // Send a message
-            client.SendMessage("Hello, WebSocket!");
-
-            // Keep the console application running until a key is pressed
+            client.SendMessage("ueeeilaaa");
             Console.ReadKey();
         }
     }

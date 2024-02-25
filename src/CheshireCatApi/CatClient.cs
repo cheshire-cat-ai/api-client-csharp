@@ -1,4 +1,6 @@
 using System;
+using CheshireCatApi.Api;
+using CheshireCatApi.Client;
 using WebSocketSharp;
 using Newtonsoft.Json;
 
@@ -7,25 +9,125 @@ namespace CheshireCatApi;
 public class CatClient
 {
     private WebSocket _webSocket;
+    private MemoryApi _memoryApi;
+    private PluginsApi _pluginsApi;
+    private RabbitHoleApi _rabbitHoleApi;
+    private StatusApi _statusApi;
+    private EmbedderApi _embedderApi;
+    private SettingsApi _settingsApi;
+    private LargeLanguageModelApi _languageModel;
 
-    public Configuration websocketConfig;
+    private Configuration _configuration;
+
+    public MemoryApi Memory
+    {
+        get
+        {
+            if (_memoryApi == null)
+            {
+                _memoryApi = new MemoryApi(_configuration);
+            }
+            
+            return _memoryApi;
+        }
+    }
+
+    public PluginsApi Plugins
+    {
+        get
+        {
+            if (_pluginsApi == null)
+            {
+                _pluginsApi = new PluginsApi(_configuration);
+            }
+            
+            return _pluginsApi;
+        }
+    }
+
+    public RabbitHoleApi RabbitHole
+    {
+        get
+        {
+            if (_rabbitHoleApi == null)
+            {
+                _rabbitHoleApi = new RabbitHoleApi(_configuration);
+            }
+
+            return _rabbitHoleApi;
+        }
+    }
+
+    public StatusApi Status
+    {
+        get
+        {
+            if (_statusApi == null)
+            {
+                _statusApi = new StatusApi(_configuration);
+            }
+
+            return _statusApi;
+        }
+    }
+
+    public EmbedderApi Embedder
+    {
+        get
+        {
+            if (_embedderApi == null)
+            {
+                _embedderApi = new EmbedderApi(_configuration);
+            }
+
+            return _embedderApi;
+        }
+    }
+
+    public SettingsApi Settings
+    {
+        get
+        {
+            if (_settingsApi == null)
+            {
+                _settingsApi = new SettingsApi(_configuration);
+            }
+
+            return _settingsApi;
+        }
+    }
+
+    public LargeLanguageModelApi LanguageModel
+    {
+        get
+        {
+            if (_languageModel == null)
+            {
+                _languageModel = new LargeLanguageModelApi(_configuration);
+            }
+
+            return _languageModel;
+        }
+    }
+    
+    public ConnectionSettings settings;
     public Action<string> OnMessage { get; set; }
     public Action OnOpen { get; set; }
     public Action OnClose { get; set; }
     public Action OnError { get; set; }
-    
-    public CatClient()
-        : this(new Configuration())
-    {
-    }
 
-    public CatClient(Configuration connConfiguration)
+    public CatClient(ConnectionSettings connSettings)
     {
-        websocketConfig = connConfiguration;
-        string protocol = websocketConfig.secureConnection ? "wss" : "ws";
-        Console.WriteLine(protocol);
-        _webSocket = new WebSocket($"ws://{websocketConfig.baseUrl}:{websocketConfig.port}/ws/{websocketConfig.userId}");
-        
+        settings = connSettings;
+        string wsProtocol = settings.secureConnection ? "wss" : "ws";
+        string httpProtocol = settings.secureConnection ? "https" : "http";
+        string baseUrl = $"{settings.baseUrl}:{settings.port}";
+        _webSocket = new WebSocket($"{wsProtocol}://{baseUrl}/ws/{settings.userId}");
+        _configuration = new Configuration
+        {
+            BasePath = $"{httpProtocol}://{baseUrl}"
+        };
+
         _webSocket.OnMessage += (sender, e) =>
         {
             OnMessage?.Invoke(e.Data);

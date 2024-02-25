@@ -1,6 +1,6 @@
 namespace CheshireCatApi;
 
-public struct Configuration
+public struct ConnectionSettings
 {
     public string baseUrl;
     public int port;
@@ -8,7 +8,7 @@ public struct Configuration
     public string auth_key;
     public bool secureConnection;
 
-    public Configuration()
+    public ConnectionSettings()
     {
         baseUrl = "localhost";
         port = 1865;
