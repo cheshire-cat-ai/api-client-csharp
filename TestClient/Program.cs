@@ -30,6 +30,8 @@ namespace TestClient
             // Connect to the WebSocket server
             client.ConnectWebsocket();
             client.SendMessage("ueeeilaaa");
+            string userName = Console.ReadLine();
+            client.SendMessage(userName);
             Console.ReadKey();
         }
     }

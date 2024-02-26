@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.JavaScript;
 using CheshireCatApi.Api;
 using CheshireCatApi.Client;
 using WebSocketSharp;
@@ -15,7 +17,7 @@ public class CatClient
     private StatusApi _statusApi;
     private EmbedderApi _embedderApi;
     private SettingsApi _settingsApi;
-    private LargeLanguageModelApi _languageModel;
+    private LargeLanguageModelApi _languageModelApi;
 
     private Configuration _configuration;
 
@@ -97,20 +99,20 @@ public class CatClient
         }
     }
 
-    public LargeLanguageModelApi LanguageModel
+    public LargeLanguageModelApi LanguageModelApi
     {
         get
         {
-            if (_languageModel == null)
+            if (_languageModelApi == null)
             {
-                _languageModel = new LargeLanguageModelApi(_configuration);
+                _languageModelApi = new LargeLanguageModelApi(_configuration);
             }
 
-            return _languageModel;
+            return _languageModelApi;
         }
     }
     
-    public ConnectionSettings settings;
+    private ConnectionSettings _settings;
     public Action<string> OnMessage { get; set; }
     public Action OnOpen { get; set; }
     public Action OnClose { get; set; }
@@ -118,11 +120,11 @@ public class CatClient
 
     public CatClient(ConnectionSettings connSettings)
     {
-        settings = connSettings;
-        string wsProtocol = settings.secureConnection ? "wss" : "ws";
-        string httpProtocol = settings.secureConnection ? "https" : "http";
-        string baseUrl = $"{settings.baseUrl}:{settings.port}";
-        _webSocket = new WebSocket($"{wsProtocol}://{baseUrl}/ws/{settings.userId}");
+        _settings = connSettings;
+        string wsProtocol = _settings.secureConnection ? "wss" : "ws";
+        string httpProtocol = _settings.secureConnection ? "https" : "http";
+        string baseUrl = $"{_settings.baseUrl}:{_settings.port}";
+        _webSocket = new WebSocket($"{wsProtocol}://{baseUrl}/ws/{_settings.userId}");
         _configuration = new Configuration
         {
             BasePath = $"{httpProtocol}://{baseUrl}"
@@ -161,7 +163,18 @@ public class CatClient
     
     public void SendMessage(string text)
     {
-        Message message = new Message { text = text };
+        SendMessage(text, null);
+    }
+    
+    public void SendMessage(string text, object custom)
+    {
+        // TODO make this dynamic
+        Dictionary<string, object> message = new Dictionary<string, object>();
+        message.Add("text", text);
+        if (custom != null)
+        {
+            message.Add("custom", custom);    
+        }
         string jsonMessage = JsonConvert.SerializeObject(message);
         _webSocket.Send(jsonMessage);
     }
