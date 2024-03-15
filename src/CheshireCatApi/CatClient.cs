@@ -166,14 +166,17 @@ public class CatClient
         SendMessage(text, null);
     }
     
-    public void SendMessage(string text, object custom)
+    public void SendMessage(string text, Dictionary<string, object> customJson)
     {
-        // TODO make this dynamic
         Dictionary<string, object> message = new Dictionary<string, object>();
-        message.Add("text", text);
-        if (custom != null)
+        message["text"] = text;
+        
+        if (customJson != null)
         {
-            message.Add("custom", custom);    
+            foreach (var kvp in customJson)
+            {
+                message[kvp.Key] = kvp.Value;
+            }
         }
         string jsonMessage = JsonConvert.SerializeObject(message);
         _webSocket.Send(jsonMessage);

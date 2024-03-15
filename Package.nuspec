@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>CheshireCatApi</id>
+    <version>1.0.0</version>
+    <authors>nicorb</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/cheshire-cat-ai/api-client-csharp</projectUrl>
+    <description>Client library for the Cheshire Cat AI</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags></tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Polly" version="8.1.0" />
+        <dependency id="RestSharp" version="110.2.0" />
+        <dependency id="JsonSubTypes" version="2.0.1" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="WebSocketSharp" version="1.0.3-rc11" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
